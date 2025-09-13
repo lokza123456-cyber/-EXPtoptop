@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>เครื่องคำนวณ EXP - เหรียญ - บาท</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      height: 100vh;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 550px;
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    .section {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    h2 {
+      font-size: 1.1em;
+      color: #007bff;
+      margin-bottom: 10px;
+    }
+
+    label {
+      font-size: 0.95em;
+      color: #333;
+    }
+
+    input {
+      padding: 10px;
+      width: 100%;
+      margin-top: 8px;
+      margin-bottom: 12px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+
+    button {
+      padding: 10px;
+      width: 100%;
+      background-color: #007bff;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .result {
+      margin-top: 12px;
+      text-align: center;
+      font-weight: bold;
+      color: green;
+    }
+
+    .centered {
+      text-align: center;
+    }
+
+    .link-button {
+      background-color: orange;
+      padding: 10px 20px;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      display: inline-block;
+      margin-top: 10px;
+      font-weight: bold;
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    .link-button:hover {
+      background-color: darkorange;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>เครื่องคำนวณ EXP ↔ เหรียญ ↔ บาท</h1>
+
+    <!-- เหรียญ → EXP -->
+    <div class="section">
+      <h2>คำนวณ EXP จากเหรียญ</h2>
+      <label for="coinsInput">จำนวนเหรียญ:</label>
+      <input type="number" id="coinsInput" placeholder="เช่น 250" min="0" />
+      <button onclick="calculateEXP()">คำนวณ EXP</button>
+      <div id="expResult" class="result"></div>
+    </div>
+
+    <!-- EXP → เหรียญ -->
+    <div class="section">
+      <h2>คำนวณเหรียญจาก EXP</h2>
+      <label for="expInput">จำนวน EXP:</label>
+      <input type="number" id="expInput" placeholder="เช่น 10" min="0" />
+      <button onclick="calculateCoins()">คำนวณเหรียญ</button>
+      <div id="coinResult" class="result"></div>
+    </div>
+
+    <!-- บาท → เหรียญ -->
+    <div class="section">
+      <h2>คำนวณเหรียญจากเงินบาท</h2>
+      <label for="bahtInput">จำนวนเงิน (บาท):</label>
+      <input type="number" id="bahtInput" placeholder="เช่น 100" min="0" step="0.01" />
+      <button onclick="calculateBahtToCoins()">คำนวณเหรียญ</button>
+      <div id="bahtResult" class="result"></div>
+    </div>
+
+    <!-- เหรียญ → บาท -->
+    <div class="section">
+      <h2>คำนวณเงินบาทจากเหรียญ</h2>
+      <label for="coinToBahtInput">จำนวนเหรียญ:</label>
+      <input type="number" id="coinToBahtInput" placeholder="เช่น 1000" min="0" />
+      <button onclick="calculateCoinsToBaht()">คำนวณเงินบาท</button>
+      <div id="coinToBahtResult" class="result"></div>
+    </div>
+
+    <!-- ลิงก์เติมเหรียญ -->
+    <div class="section centered" style="border-bottom: none;">
+      <h2>เติมเหรียญ</h2>
+      <p>คลิกปุ่มด้านล่างเพื่อไปยังหน้าชำระเงิน:</p>
+      <a href="https://sea-webpay.toptop.net/webPay/index.html?lang=th#/login" target="_blank" class="link-button">
+        ไปยังหน้าชำระเงิน
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const expRate = 25;       // 25 เหรียญ = 1 EXP
+    const coinPerBaht = 73.6; // 1 บาท = 73.6 เหรียญ
+
+    function calculateEXP() {
+      const coins = parseFloat(document.getElementById("coinsInput").value);
+      const resultDiv = document.getElementById("expResult");
+
+      if (isNaN(coins) || coins < 0) {
+        resultDiv.textContent = "กรุณากรอกจำนวนเหรียญให้ถูกต้อง";
+        return;
+      }
+
+      const exp = coins / expRate;
+      resultDiv.innerHTML = `คุณจะได้รับ <strong>${exp.toFixed(2)}</strong> EXP`;
+    }
+
+    function calculateCoins() {
+      const exp = parseFloat(document.getElementById("expInput").value);
+      const resultDiv = document.getElementById("coinResult");
+
+      if (isNaN(exp) || exp < 0) {
+        resultDiv.textContent = "กรุณากรอกจำนวน EXP ให้ถูกต้อง";
+        return;
+      }
+
+      const coins = exp * expRate;
+      resultDiv.innerHTML = `คุณต้องใช้ <strong>${coins.toLocaleString()}</strong> เหรียญ`;
+    }
+
+    function calculateBahtToCoins() {
+      const baht = parseFloat(document.getElementById("bahtInput").value);
+      const resultDiv = document.getElementById("bahtResult");
+
+      if (isNaN(baht) || baht < 0) {
+        resultDiv.textContent = "กรุณากรอกจำนวนเงินบาทให้ถูกต้อง";
+        return;
+      }
+
+      const coins = baht * coinPerBaht;
+      resultDiv.innerHTML = `คุณจะได้รับ <strong>${coins.toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong> เหรียญ`;
+    }
+
+    function calculateCoinsToBaht() {
+      const coins = parseFloat(document.getElementById("coinToBahtInput").value);
+      const resultDiv = document.getElementById("coinToBahtResult");
+
+      if (isNaN(coins) || coins < 0) {
+        resultDiv.textContent = "กรุณากรอกจำนวนเหรียญให้ถูกต้อง";
+        return;
+      }
+
+      const baht = coins / coinPerBaht;
+      resultDiv.innerHTML = `เหรียญจำนวนนี้คิดเป็น <strong>${baht.toFixed(2)}</strong> บาท`;
+    }
+  </script>
+</body>
+</html>
